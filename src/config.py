@@ -39,13 +39,14 @@ def load_config(path: Path | None = None) -> AppConfig:
     for item in telegram.get("groups") or []:
         name = str(item["name"]).strip()
         username = str(item.get("username") or "").strip().lstrip("@")
+        title = str(item.get("title") or "").strip()
         try:
             chat_id = int(item.get("chat_id") or 0)
         except (TypeError, ValueError):
             chat_id = 0
         if not chat_id and not username:
             raise ValueError(f"Group {name} needs chat_id or username")
-        groups.append(GroupConfig(name=name, chat_id=chat_id, username=username))
+        groups.append(GroupConfig(name=name, chat_id=chat_id, username=username, title=title))
     if not groups:
         raise ValueError("Configure at least one Telegram group")
     tz_name = str(raw.get("timezone") or "Asia/Jerusalem")

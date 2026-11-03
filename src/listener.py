@@ -49,11 +49,9 @@ class SignalListener:
             try:
                 entity = await self.client.get_entity(target)
                 group.chat_id = int(get_peer_id(entity))
-                group.title = (
-                    getattr(entity, "title", None)
-                    or getattr(entity, "username", None)
-                    or group.name
-                )
+                live = getattr(entity, "title", None) or getattr(entity, "username", None)
+                if live:
+                    group.title = str(live)
                 await self.client.get_messages(entity, limit=1)
                 _LOG.info(
                     "Subscribed %s | title=%s | chat_id=%s",
@@ -100,7 +98,7 @@ class SignalListener:
             received = utcnow()
         elif received.tzinfo is None:
             received = received.replace(tzinfo=timezone.utc)
-        title = group.title or await self._chat_title(event, group)
+        title = await self._chat_title(event, group)
         rec = self.db.insert_signal(
             group_name=group.name,
             group_id=int(chat_id),
@@ -123,10 +121,11 @@ class SignalListener:
             try:
                 chat = await event.get_chat()
             except Exception:
-                return group.name
-        title = getattr(chat, "title", None) or getattr(chat, "username", None) or group.name
-        group.title = title
-        return title
+                return group.title or group.name
+        live = getattr(chat, "title", None) or getattr(chat, "username", None)
+        if live:
+            group.title = str(live)
+        return group.title or group.name
 
     async def _match_by_username(self, event: events.NewMessage.Event, chat_id: int) -> GroupConfig | None:
         chat = event.chat
@@ -147,8 +146,8 @@ class SignalListener:
 def describe_groups(groups: list[GroupConfig]) -> str:
     parts = []
     for g in groups:
-        title = g.title or g.username or "?"
-        parts.append(f"{g.name} | {title} | {g.chat_id or 'unresolved'}")
+        title = g.title or "?"
+        parts.append(f"{title} | {g.chat_id or 'unresolved'}")
     return "; ".join(parts)
 
 

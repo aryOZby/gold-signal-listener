@@ -3,12 +3,16 @@ timezone: Asia/Jerusalem
 telegram:
   session_name: gold_signal_listener
   groups:
-    - name: group_a
+    # name = מפתח פנימי יציב. title = השם שמופיע בטלגרם; בריצה נשלף מחדש מהערוץ עצמו.
+    - name: vip_signals_room
+      title: "VIP SIGNALS ROOM (LIFETIME)"
       chat_id: -1002001216034
-    - name: TechnicalPips6273
+    - name: technical_pips
+      title: "Technical Pips ™"
       username: TechnicalPips6273
       chat_id: -1001569906975
     - name: profit_kings
+      title: "profit__kings"
       username: profitkingscalper_007
       chat_id: -1002984909577
   admin_chat_id: 167570482
