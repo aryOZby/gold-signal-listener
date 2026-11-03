@@ -1,0 +1,15 @@
+.tools/
+.env
+config.yaml
+config.yaml.bak
+*.session
+*.session-journal
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+data/
+reports/
+logs/
+*.pyc
+.DS_Store

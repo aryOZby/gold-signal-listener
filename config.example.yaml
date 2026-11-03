@@ -1,0 +1,20 @@
+timezone: Asia/Jerusalem
+
+telegram:
+  session_name: gold_signal_listener
+  groups:
+    - name: group_a
+      chat_id: -1002001216034
+    - name: TechnicalPips6273
+      username: TechnicalPips6273
+      chat_id: -1001569906975
+    - name: profit_kings
+      username: profitkingscalper_007
+      chat_id: -1002984909577
+  admin_chat_id: 167570482
+
+paths:
+  data_dir: data
+  logs_dir: logs
+  reports_dir: reports
+  outbox_dir: data/outbox
