@@ -15,7 +15,7 @@ from src.config import load_config  # noqa: E402
 async def _run() -> int:
     cfg = load_config()
     if not cfg.telegram_api_id or not cfg.telegram_api_hash:
-        print("חסר TELEGRAM_API_ID / TELEGRAM_API_HASH ב-.env")
+        print("Missing TELEGRAM_API_ID / TELEGRAM_API_HASH in .env")
         return 1
     from telethon import TelegramClient
 
@@ -27,7 +27,7 @@ async def _run() -> int:
     async for dialog in client.iter_dialogs():
         print(f"{dialog.id}\t{dialog.name}")
     await client.disconnect()
-    print("\nהעתק את ה-ID של הקבוצה אל config.yaml תחת telegram.groups.chat_id")
+    print("\nCopy the group id into config.yaml under telegram.groups.chat_id")
     return 0
 
 

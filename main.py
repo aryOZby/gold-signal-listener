@@ -15,7 +15,7 @@ _LOG = logging.getLogger(__name__)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Telegram gold-signal listener (catalog only)")
+    parser = argparse.ArgumentParser(description="Gold Trading — Telegram Group Listener")
     parser.add_argument("--config", default="config.yaml")
     args = parser.parse_args()
 
@@ -23,11 +23,11 @@ def main() -> int:
         cfg = load_config(Path(args.config) if args.config else None)
     except yaml.YAMLError as exc:
         mark = getattr(exc, "problem_mark", None)
-        where = f" (שורה {mark.line + 1}, עמודה {mark.column + 1})" if mark else ""
-        print(f"שגיאת תחביר ב-config.yaml{where}: {getattr(exc, 'problem', exc)}")
+        where = f" (line {mark.line + 1}, column {mark.column + 1})" if mark else ""
+        print(f"config.yaml syntax error{where}: {getattr(exc, 'problem', exc)}")
         return 1
     except (ValueError, KeyError) as exc:
-        print(f"config.yaml נדחה: {exc}")
+        print(f"config.yaml rejected: {exc}")
         return 1
 
     setup_logging(cfg.logs_dir)

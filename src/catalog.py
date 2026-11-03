@@ -9,18 +9,18 @@ from .models import CatalogRecord
 from .timeutil import display_date, display_time
 
 HEADERS = [
-    "מספר איתות בחודש",
-    "תאריך",
-    "שעה",
-    "מזהה קבוצה",
-    "שם מקורי",
-    "שם פנימי",
-    "כיוון",
-    "סימול",
-    "כניסה",
+    "Monthly #",
+    "Date",
+    "Time",
+    "Group ID",
+    "Original title",
+    "Internal name",
+    "Side",
+    "Symbol",
+    "Entry",
     "SL",
     "TPs",
-    "טקסט מקור",
+    "Source text",
 ]
 
 
@@ -34,7 +34,7 @@ def write_signal(reports_dir: Path, rec: CatalogRecord, tz: ZoneInfo) -> Path:
     else:
         book = Workbook()
         sheet = book.active
-        sheet.title = "איתותים"
+        sheet.title = "Signals"
         sheet.append(HEADERS)
     sheet.append(
         [

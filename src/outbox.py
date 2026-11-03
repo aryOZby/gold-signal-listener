@@ -7,7 +7,7 @@ from .models import CatalogRecord
 
 
 def write_outbox(outbox_dir: Path, rec: CatalogRecord) -> Path:
-    """קובץ JSON לכל איתות — זה מה שבוט הגרף (שלב 2) ישאב."""
+    """One JSON file per signal — consumed later by the chart executor."""
     outbox_dir.mkdir(parents=True, exist_ok=True)
     path = outbox_dir / f"{rec.id}.json"
     payload = {

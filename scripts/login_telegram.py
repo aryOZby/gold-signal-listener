@@ -19,14 +19,14 @@ async def _run(force_sms: bool) -> int:
     cfg = load_config()
     setup_logging(cfg.logs_dir)
     if not cfg.telegram_api_id or not cfg.telegram_api_hash:
-        print("חסר TELEGRAM_API_ID / TELEGRAM_API_HASH בקובץ .env")
+        print("Missing TELEGRAM_API_ID / TELEGRAM_API_HASH in .env")
         return 1
     phone = (cfg.telegram_phone or "").strip()
     if not phone:
-        print("חסר TELEGRAM_PHONE ב-.env (למשל +972501234567)")
+        print("Missing TELEGRAM_PHONE in .env (example: +972501234567)")
         return 1
     if not phone.startswith("+"):
-        print("TELEGRAM_PHONE חייב להתחיל ב-+ וקידומת מדינה")
+        print("TELEGRAM_PHONE must start with + and a country code")
         return 1
 
     from telethon import TelegramClient
@@ -42,30 +42,30 @@ async def _run(force_sms: bool) -> int:
     await client.connect()
     if await client.is_user_authorized():
         me = await client.get_me()
-        print(f"כבר מחובר כ-{getattr(me, 'username', None) or me.id}")
+        print(f"Already signed in as {getattr(me, 'username', None) or me.id}")
         await client.disconnect()
         return 0
 
-    print(f"שולח קוד ל-{phone}" + (" ב-SMS" if force_sms else " לאפליקציית טלגרם"))
+    print(f"Sending a code to {phone}" + (" via SMS" if force_sms else " via the Telegram app"))
     sent = await client.send_code_request(phone, force_sms=force_sms)
-    print(f"שיטת שליחה: {type(sent.type).__name__}")
-    code = input("הקלד את הקוד (ספרות בלבד): ").strip()
+    print(f"Delivery: {type(sent.type).__name__}")
+    code = input("Enter the code (digits only): ").strip()
     try:
         await client.sign_in(phone, code)
     except PhoneCodeInvalidError:
-        print("קוד שגוי. הרץ שוב וקח את הקוד החדש.")
+        print("Invalid code. Run again and use the new code.")
         await client.disconnect()
         return 1
     except PhoneCodeExpiredError:
-        print("הקוד פג. הרץ שוב.")
+        print("Code expired. Run again.")
         await client.disconnect()
         return 1
     except SessionPasswordNeededError:
-        password = getpass.getpass("סיסמת Two-Step Verification של טלגרם: ")
+        password = getpass.getpass("Telegram two-step verification password: ")
         await client.sign_in(password=password)
 
     me = await client.get_me()
-    print(f"מחובר כ-{getattr(me, 'username', None) or me.id} (id={me.id})")
+    print(f"Signed in as {getattr(me, 'username', None) or me.id} (id={me.id})")
     await client.disconnect()
     return 0
 

@@ -23,10 +23,10 @@ _DASHES = str.maketrans(
     }
 )
 
-# שתי התבניות הנתמכות:
+# Supported templates:
 #   #XAUUSD SELL 4315-4318   /  TP 4312      /  SL 4327
 #   XAUUSD SELL PLAN @4365_4368  /  tp @4349  /  SL@4381
-#   𝐓𝐏 ( ❷ ) 4176  — אותיות מעוצבות ומספר בסוגריים
+#   𝐓𝐏 ( ❷ ) 4176  — styled letters and a parenthesized index
 _HEADER = re.compile(
     r"^#?\s*(?P<symbol>[A-Za-z0-9._]+)\s+"
     r"(?P<side>BUY|SELL)"

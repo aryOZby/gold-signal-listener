@@ -3,7 +3,7 @@ timezone: Asia/Jerusalem
 telegram:
   session_name: gold_signal_listener
   groups:
-    # name = מפתח פנימי יציב. title = השם שמופיע בטלגרם; בריצה נשלף מחדש מהערוץ עצמו.
+    # name = stable internal key. title = Telegram display name (refreshed live).
     - name: vip_signals_room
       title: "VIP SIGNALS ROOM (LIFETIME)"
       chat_id: -1002001216034
@@ -15,6 +15,18 @@ telegram:
       title: "profit__kings"
       username: profitkingscalper_007
       chat_id: -1002984909577
+    - name: gold_sniper
+      title: "GOLD SNIPER"
+      username: GOLDSNNPER786
+      chat_id: -1001754381715
+    - name: trade_with_samder
+      title: "Trade With Samder"
+      username: TREADWITHSAMDAR022
+      chat_id: -1002366136201
+    - name: gold_bullet_signals
+      title: "GOLD BULLET SIGNALS"
+      username: XAUUSD_GoldSings173740
+      chat_id: -1003186082440
   admin_chat_id: 167570482
 
 paths:

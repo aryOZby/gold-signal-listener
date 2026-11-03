@@ -44,7 +44,7 @@ class SignalListener:
         for group in self.cfg.groups:
             target = group.chat_id or group.username
             if not target:
-                _LOG.warning("חסר chat_id/username לקבוצה %s", group.name)
+                _LOG.warning("Missing chat_id/username for group %s", group.name)
                 continue
             try:
                 entity = await self.client.get_entity(target)
@@ -61,7 +61,7 @@ class SignalListener:
                 )
             except Exception:
                 _LOG.exception(
-                    "לא הצלחתי להירשם ל-%s (%s) — ודא שהחשבון חבר/מנוי בערוץ",
+                    "Failed to subscribe to %s (%s) — the account must already be a member",
                     group.name,
                     target,
                 )
