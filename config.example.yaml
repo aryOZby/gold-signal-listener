@@ -32,5 +32,4 @@ telegram:
 paths:
   data_dir: data
   logs_dir: logs
-  reports_dir: reports
   outbox_dir: data/outbox

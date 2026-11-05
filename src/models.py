@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 
 class Side(str, Enum):
@@ -35,21 +34,15 @@ class GroupConfig:
     title: str = ""
 
 
-@dataclass
-class CatalogRecord:
-    id: str
+@dataclass(frozen=True)
+class SignalMessage:
     group_name: str
     group_id: int
     group_title: str
-    month: str
-    month_seq: int
-    received_at: datetime
     telegram_msg_id: int
-    side: str
-    symbol: str
-    entry: float
-    zone_low: float
-    zone_high: float
-    sl: float
-    tps: tuple[float, ...]
-    raw_text: str
+    received_at: datetime
+    parsed: ParsedSignal
+
+    @property
+    def id(self) -> str:
+        return f"{self.group_id}_{self.telegram_msg_id}"

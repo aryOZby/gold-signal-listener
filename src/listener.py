@@ -8,21 +8,18 @@ from telethon import TelegramClient, events
 from telethon.tl.custom.message import Message
 from telethon.utils import get_peer_id
 
-from .catalog import write_signal
 from .config import AppConfig, group_by_chat_id, group_by_username
-from .db import CatalogDB
-from .models import CatalogRecord, GroupConfig
+from .models import GroupConfig, SignalMessage
 from .outbox import write_outbox
 from .parser import parse_signal
-from .timeutil import display_date, display_time, utcnow
+from .timeutil import display_dt, utcnow
 
 _LOG = logging.getLogger(__name__)
 
 
 class SignalListener:
-    def __init__(self, cfg: AppConfig, db: CatalogDB):
+    def __init__(self, cfg: AppConfig):
         self.cfg = cfg
-        self.db = db
         cfg.data_dir.mkdir(parents=True, exist_ok=True)
         session = Path(cfg.data_dir) / cfg.session_name
         self.client = TelegramClient(str(session), cfg.telegram_api_id, cfg.telegram_api_hash)
@@ -99,21 +96,16 @@ class SignalListener:
         elif received.tzinfo is None:
             received = received.replace(tzinfo=timezone.utc)
         title = await self._chat_title(event, group)
-        rec = self.db.insert_signal(
+        signal = SignalMessage(
             group_name=group.name,
             group_id=int(chat_id),
             group_title=title,
-            received_at=received,
             telegram_msg_id=int(msg.id),
+            received_at=received,
             parsed=parsed,
-            tz=self.cfg.tz,
         )
-        if rec is None:
-            _LOG.info("Duplicate skipped %s msg_id=%s", group.name, msg.id)
-            return
-        write_signal(self.cfg.reports_dir, rec, self.cfg.tz)
-        write_outbox(self.cfg.outbox_dir, rec)
-        _LOG.info("%s", format_record(rec, self.cfg.tz))
+        write_outbox(self.cfg.outbox_dir, signal)
+        _LOG.info("Signal %s", format_signal(signal, self.cfg.tz))
 
     async def _chat_title(self, event: events.NewMessage.Event, group: GroupConfig) -> str:
         chat = event.chat
@@ -151,10 +143,11 @@ def describe_groups(groups: list[GroupConfig]) -> str:
     return "; ".join(parts)
 
 
-def format_record(rec: CatalogRecord, tz) -> str:
+def format_signal(signal: SignalMessage, tz) -> str:
+    parsed = signal.parsed
     return (
-        f"[{rec.group_title} | {rec.group_id}] "
-        f"{rec.month} #{rec.month_seq} "
-        f"{display_date(rec.received_at, tz)} {display_time(rec.received_at, tz)} "
-        f"{rec.side} {rec.symbol} entry={rec.entry} sl={rec.sl} tps={list(rec.tps)}"
+        f"[{signal.group_title} | {signal.group_id}] "
+        f"{display_dt(signal.received_at, tz)} "
+        f"{parsed.side.value} {parsed.symbol} entry={parsed.entry} sl={parsed.sl} "
+        f"tps={list(parsed.tps)}"
     )

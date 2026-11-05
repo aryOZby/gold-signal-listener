@@ -7,7 +7,6 @@ from pathlib import Path
 import yaml
 
 from src.config import load_config
-from src.db import CatalogDB
 from src.listener import SignalListener, describe_groups
 from src.logging_setup import setup_logging
 
@@ -36,10 +35,8 @@ def main() -> int:
         return 1
 
     cfg.data_dir.mkdir(parents=True, exist_ok=True)
-    cfg.reports_dir.mkdir(parents=True, exist_ok=True)
     cfg.outbox_dir.mkdir(parents=True, exist_ok=True)
-    db = CatalogDB(cfg.data_dir / "catalog.db")
-    service = SignalListener(cfg, db)
+    service = SignalListener(cfg)
     _LOG.info("Listener start groups=%s tz=%s", describe_groups(cfg.groups), cfg.timezone)
 
     try:

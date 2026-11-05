@@ -16,22 +16,8 @@ def as_utc(dt: datetime | None) -> datetime | None:
     return dt.astimezone(timezone.utc)
 
 
-def month_key(dt: datetime, tz: ZoneInfo) -> str:
-    local = as_utc(dt)
-    if local is None:
-        local = utcnow()
-    return local.astimezone(tz).strftime("%Y-%m")
-
-
-def display_date(dt: datetime, tz: ZoneInfo) -> str:
+def display_dt(dt: datetime, tz: ZoneInfo) -> str:
     local = as_utc(dt)
     if local is None:
         return ""
-    return local.astimezone(tz).strftime("%Y-%m-%d")
-
-
-def display_time(dt: datetime, tz: ZoneInfo) -> str:
-    local = as_utc(dt)
-    if local is None:
-        return ""
-    return local.astimezone(tz).strftime("%H:%M:%S")
+    return local.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")

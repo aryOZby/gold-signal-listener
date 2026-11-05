@@ -25,7 +25,6 @@ class AppConfig:
     telegram_phone: str
     data_dir: Path
     logs_dir: Path
-    reports_dir: Path
     outbox_dir: Path
 
 
@@ -63,7 +62,6 @@ def load_config(path: Path | None = None) -> AppConfig:
         telegram_phone=os.getenv("TELEGRAM_PHONE") or "",
         data_dir=ROOT / str(paths.get("data_dir") or "data"),
         logs_dir=ROOT / str(paths.get("logs_dir") or "logs"),
-        reports_dir=ROOT / str(paths.get("reports_dir") or "reports"),
         outbox_dir=ROOT / str(paths.get("outbox_dir") or "data/outbox"),
     )
 

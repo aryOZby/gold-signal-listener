@@ -1,38 +1,31 @@
 # Gold Trading — Telegram Group Listener
 
-Ingest service for a gold-trading desk. This repository is the **listener** half of the system: it watches Telegram signal groups and catalogs XAUUSD calls. It does not size lots, open orders, or talk to MetaTrader.
-
-The split is the same idea as backend / frontend:
+Ingest service for a gold-trading desk. Its only job is to listen: it watches Telegram signal groups, recognizes XAUUSD calls, and hands each one to the next service. It keeps no records, builds no reports, and never talks to MetaTrader.
 
 | Service | Role |
 |---|---|
-| **Telegram Group Listener** (this repo) | Subscribe to groups by chat id, parse BUY/SELL templates, store a durable catalog |
-| **Chart Executor** (next repo) | Read the listener outbox and run entries, lots, stops, and reports on the chart |
+| **Telegram Group Listener** (this repo) | Listen to groups by chat id and hand off each recognized signal |
+| [Chart Executor](https://github.com/aryOZby/gold-trading-chart-executor) | Trade those signals on the MT5 chart |
+| Reporting (planned) | Build monthly Excel tables per group and email them |
 
-Identity is always the Telegram **chat id**. The original channel title is stored next to it so operators can recognize the group in logs and workbooks.
+Identity is always the Telegram **chat id**. The live channel title travels with every signal so operators can recognize the group downstream.
 
-## What it records
+## Hand-off
 
-Every accepted signal is stored with:
+Each recognized signal becomes one file in `data/outbox/`, named `<chat_id>_<message_id>.json`:
 
-- original Telegram title and numeric chat id
-- date and time (`Asia/Jerusalem`)
-- per-group monthly sequence (`#1`, `#2`, …) that resets on the 1st of each month
-- side, symbol, entry, SL, take-profits, and the raw message
+- group chat id, internal name, and original Telegram title
+- message time
+- side, symbol, entry, zone, SL, and take-profits
+- the raw message text
 
-Outputs:
+The Chart Executor picks the file up and moves it out of the folder. Promotional or malformed messages are ignored and never reach the outbox.
 
-- SQLite: `data/catalog.db`
-- Excel: `reports/<internal-name>/<YYYY-MM>.xlsx`
-- Executor outbox: `data/outbox/<id>.json`
-
-Log line:
+Log line for a recognized signal:
 
 ```
-[Technical Pips ™ | -1001569906975] 2026-11 #3 2026-11-03 11:15:00 SELL XAUUSD ...
+Signal [Technical Pips ™ | -1001569906975] 2026-11-03 11:15:00 SELL XAUUSD entry=4315.0 sl=4327.0 tps=[...]
 ```
-
-Promotional or malformed messages are ignored on purpose.
 
 ## Groups
 
@@ -60,7 +53,3 @@ py -3 -m venv .venv
 ```
 
 `.env` needs `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, and `TELEGRAM_PHONE` from [my.telegram.org](https://my.telegram.org). Keep the CMD window open while listening.
-
-## Outbox for the executor
-
-Each catalogued signal writes JSON the chart service will consume later: group id, original title, monthly sequence, side, entry, SL, and TPs.
