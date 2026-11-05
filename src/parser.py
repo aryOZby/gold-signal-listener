@@ -23,24 +23,22 @@ _DASHES = str.maketrans(
     }
 )
 
-# Supported templates:
-#   #XAUUSD SELL 4315-4318   /  TP 4312      /  SL 4327
-#   XAUUSD SELL PLAN @4365_4368  /  tp @4349  /  SL@4381
-#   𝐓𝐏 ( ❷ ) 4176  — styled letters and a parenthesized index
+# Strategy templates 1–5 (GOLD / XAUUSD, market or PLAN, TP / TP1, SL with trailing words).
 _HEADER = re.compile(
     r"^#?\s*(?P<symbol>[A-Za-z0-9._]+)\s+"
     r"(?P<side>BUY|SELL)"
     r"(?:\s+PLAN)?\s+"
     r"@?(?P<first>\d+(?:\.\d+)?)"
-    r"(?:\s*[-_]\s*@?(?P<second>\d+(?:\.\d+)?))?\s*$",
+    r"(?:\s*[-_/,]\s*@?(?P<second>\d+(?:\.\d+)?))?\s*$",
     re.IGNORECASE,
 )
+_MORE = re.compile(r"^MORE\s+(BUY|SELL)\b", re.IGNORECASE)
 _TP = re.compile(
-    r"^T(?:P|ake\s*Profit)\s*(?:\([^)]*\))?\s*[:@]?\s*@?(?P<price>\d+(?:\.\d+)?)\s*$",
+    r"^T(?:P|ake\s*Profit)(?:\d{1,2})?\s*(?:\([^)]*\))?\s*[:@]?\s*@?(?P<price>\d+(?:\.\d+)?)\s*$",
     re.IGNORECASE,
 )
 _SL = re.compile(
-    r"^S(?:L|top(?:\s*Loss)?)\s*(?:\([^)]*\))?\s*[:@]?\s*@?(?P<price>\d+(?:\.\d+)?)\s*$",
+    r"^S(?:L|top(?:\s*Loss)?)\s*(?:\([^)]*\))?\s*[:@]?\s*@?(?P<price>\d+(?:\.\d+)?)\b",
     re.IGNORECASE,
 )
 
@@ -74,6 +72,8 @@ def parse_signal(text: str) -> Optional[ParsedSignal]:
     tps: list[float] = []
     sl: Optional[float] = None
     for line in lines[header_index + 1 :]:
+        if _MORE.match(line) or line.upper() in {"TP OPEN", "TOPEN"}:
+            continue
         tp_match = _TP.match(line)
         if tp_match:
             tps.append(float(tp_match.group("price")))
@@ -89,8 +89,11 @@ def parse_signal(text: str) -> Optional[ParsedSignal]:
     first = float(header.group("first"))
     second_raw = header.group("second")
     second = float(second_raw) if second_raw else first
+    symbol = header.group("symbol").upper()
+    if symbol == "GOLD":
+        symbol = "XAUUSD"
     return ParsedSignal(
-        symbol=header.group("symbol").upper(),
+        symbol=symbol,
         side=Side.BUY if header.group("side").upper() == "BUY" else Side.SELL,
         zone_low=min(first, second),
         zone_high=max(first, second),

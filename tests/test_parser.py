@@ -134,6 +134,110 @@ def test_header_keeps_first_number_as_entry():
     assert buy.entry == 4349.0
 
 
+SNIPER_SELL = """XAUUSD SELL 4083
+MORE SELL 4086
+
+TP1 4081
+TP2 4079
+TP3 4077
+TP4 4075
+TP5 4073
+
+TP OPEN
+"""
+
+SNIPER_BUY = """XAUUSD BUY 4116
+MORE BUY 4113
+
+TP¹ 4119
+TP² 4122
+TP³ 4126
+
+TP OPEN
+
+SL 4106 SCALPING
+"""
+
+
+def test_parse_sniper_buy_tp_index_and_sl_suffix():
+    sig = parse_signal(SNIPER_BUY)
+    assert sig is not None
+    assert sig.side is Side.BUY
+    assert sig.entry == 4116
+    assert sig.tps == (4119, 4122, 4126)
+    assert sig.sl == 4106
+
+
+def test_parse_sniper_sell_without_sl_is_rejected():
+    assert parse_signal(SNIPER_SELL) is None
+
+
+GOLD_SLASH_SELL = """GOLD SELL 4146/4150
+
+SL 4150
+
+TP 4143
+TP 4140
+TP 4137
+TP 4134
+TP 4130
+TP 4125
+TP 4115
+"""
+
+GOLD_SLASH_BUY = """GOLD buy 4147/4144
+
+SL 4135
+
+TP 4150
+TP 4153
+TP 4156
+TP 4160
+TP 4163
+TP 4166
+TP 4170
+"""
+
+
+def test_parse_gold_slash_header():
+    sell = parse_signal(GOLD_SLASH_SELL)
+    assert sell is not None
+    assert sell.symbol == "XAUUSD"
+    assert sell.side is Side.SELL
+    assert sell.entry == 4146
+    assert sell.zone_high == 4150
+    assert sell.sl == 4150
+    assert sell.tps[-1] == 4115
+    buy = parse_signal(GOLD_SLASH_BUY)
+    assert buy is not None
+    assert buy.side is Side.BUY
+    assert buy.entry == 4147
+    assert buy.sl == 4135
+
+
+DOUBLE_HEADER_SELL = """#XAUUSD SELL  4164
+#XAUUSD SELL 4167
+
+TP1 4161
+TP2 4158
+TP3 4155
+TP4 4152
+TP5 4149
+TP6 4143
+
+SL   4177
+"""
+
+
+def test_parse_double_header_uses_first_entry():
+    sig = parse_signal(DOUBLE_HEADER_SELL)
+    assert sig is not None
+    assert sig.side is Side.SELL
+    assert sig.entry == 4164
+    assert sig.tps == (4161, 4158, 4155, 4152, 4149, 4143)
+    assert sig.sl == 4177
+
+
 def test_header_accepts_single_full_price():
     text = "#XAUUSD SELL 4176.25\nTP 4170.10\nSL 4182.40\n"
     sig = parse_signal(text)
