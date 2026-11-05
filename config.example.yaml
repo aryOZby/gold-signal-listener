@@ -32,4 +32,5 @@ telegram:
 paths:
   data_dir: data
   logs_dir: logs
-  outbox_dir: data/outbox
+  # MT5 Common\Files\gt_signals, read directly by the Chart Executor EA.
+  outbox_dir: C:\Users\Administrator\AppData\Roaming\MetaQuotes\Terminal\Common\Files\gt_signals

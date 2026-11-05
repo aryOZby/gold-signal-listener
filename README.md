@@ -12,14 +12,14 @@ Identity is always the Telegram **chat id**. The live channel title travels with
 
 ## Hand-off
 
-Each recognized signal becomes one file in `data/outbox/`, named `<chat_id>_<message_id>.json`:
+Each recognized signal becomes one file in `paths.outbox_dir` — MT5 `Common\Files\gt_signals`, where the Chart Executor EA reads it — named `<chat_id>_<message_id>.json`:
 
 - group chat id, internal name, and original Telegram title
 - message time
 - side, symbol, entry, zone, SL, and take-profits
 - the raw message text
 
-The Chart Executor picks the file up and moves it out of the folder. Promotional or malformed messages are ignored and never reach the outbox.
+The EA picks the file up and moves it out of the folder. Promotional or malformed messages are ignored and never reach the outbox.
 
 Log line for a recognized signal:
 
