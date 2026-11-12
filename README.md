@@ -6,7 +6,7 @@ Ingest service for a gold-trading desk. Its only job is to listen: it watches Te
 |---|---|
 | **Telegram Group Listener** (this repo) | Listen to groups by chat id and hand off each recognized signal |
 | [Chart Executor](https://github.com/aryOZby/gold-trading-chart-executor) | Trade those signals on the MT5 chart |
-| Reporting (planned) | Build monthly Excel tables per group and email them |
+| [Monthly Reports](https://github.com/aryOZby/gold-trading-reports) | Build monthly Excel tables per group and email them |
 
 Identity is always the Telegram **chat id**. The live channel title travels with every signal so operators can recognize the group downstream.
 
