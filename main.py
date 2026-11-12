@@ -38,6 +38,7 @@ def main() -> int:
     cfg.outbox_dir.mkdir(parents=True, exist_ok=True)
     service = SignalListener(cfg)
     _LOG.info("Listener start groups=%s tz=%s", describe_groups(cfg.groups), cfg.timezone)
+    _LOG.info("Signals are written to %s", cfg.outbox_dir)
 
     try:
         import asyncio
