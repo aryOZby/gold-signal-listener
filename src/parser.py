@@ -23,11 +23,12 @@ _DASHES = str.maketrans(
     }
 )
 
-# Strategy templates 1–5 (GOLD / XAUUSD, market or PLAN, TP / TP1, SL with trailing words).
+# Strategy templates 1–6 (GOLD / XAUUSD, market or PLAN, "SELL 4070" or "Sell : 4070",
+# TP / TP1, SL with trailing words).
 _HEADER = re.compile(
     r"^#?\s*(?P<symbol>[A-Za-z0-9._]+)\s+"
     r"(?P<side>BUY|SELL)"
-    r"(?:\s+PLAN)?\s+"
+    r"(?:\s+PLAN)?(?:\s*:\s*|\s+)"
     r"@?(?P<first>\d+(?:\.\d+)?)"
     r"(?:\s*[-_/,]\s*@?(?P<second>\d+(?:\.\d+)?))?\s*$",
     re.IGNORECASE,

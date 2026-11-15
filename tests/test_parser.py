@@ -247,3 +247,29 @@ def test_header_accepts_single_full_price():
     assert sig.zone_high == 4176.25
     assert sig.tps == (4170.10,)
     assert sig.sl == 4182.40
+
+
+COLON_SELL = """XAUUSD Sell : 4070.40
+SL : 4073.4
+TP : 4064.4
+"""
+
+COLON_BUY = """XAUUSD Buy : 4070.40
+SL : 4067.4
+TP : 4076.4
+"""
+
+
+def test_parse_colon_template():
+    sell = parse_signal(COLON_SELL)
+    assert sell is not None
+    assert sell.side is Side.SELL
+    assert sell.entry == 4070.40
+    assert sell.sl == 4073.4
+    assert sell.tps == (4064.4,)
+    buy = parse_signal(COLON_BUY)
+    assert buy is not None
+    assert buy.side is Side.BUY
+    assert buy.entry == 4070.40
+    assert buy.sl == 4067.4
+    assert buy.tps == (4076.4,)
