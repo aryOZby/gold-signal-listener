@@ -27,6 +27,9 @@ telegram:
       title: "GOLD BULLET SIGNALS"
       username: XAUUSD_GoldSings173740
       chat_id: -1003186082440
+    - name: alphabet_forex
+      title: "Alphabet Forex"
+      username: AlphabetForex
   admin_chat_id: 167570482
 
 paths:
