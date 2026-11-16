@@ -19,6 +19,8 @@ Each recognized signal becomes one file in `paths.outbox_dir` — MT5 `Common\Fi
 - side, symbol, entry, zone, SL, and take-profits
 - the raw message text
 
+Besides Telegram's live updates, every group is also read directly every 15 seconds, so a signal still gets through when Telegram silently stops pushing updates; the log then says "caught by direct read". Each message is handled once.
+
 The EA picks the file up and moves it out of the folder. Promotional or malformed messages are ignored and never reach the outbox.
 
 Log line for a recognized signal:
